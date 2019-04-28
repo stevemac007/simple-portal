@@ -1,0 +1,100 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth
+        version: prod
+      annotations:
+        prometheus.io/path: '/prometheus'
+        prometheus.io/port: '8080'
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: auth
+        image: gcr.io/<PROJECT_ID>/auth:latest
+
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://postgres:5432/postgresdb
+          - name: SPRING_DATASOURCE_USERNAME
+            value: postgresadmin
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: admin123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: auth.gcp.whitesquaresoft.com.
+    ## Grrr - make sure this is a string not an int - https://github.com/kubernetes/kubernetes/issues/59113
+    "external-dns.alpha.kubernetes.io/ttl": "10"
+  labels:
+    app: auth
+spec:
+  type: LoadBalancer
+  selector:
+    app: auth
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: team
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: team
+        version: prod
+      annotations:
+        prometheus.io/path: '/prometheus'
+        prometheus.io/port: '8080'
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: team
+        image: gcr.io/<PROJECT_ID>/team:latest
+
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://postgres:5432/postgresdb
+        - name: SPRING_DATASOURCE_USERNAME
+          value: postgresadmin
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: admin123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: team.gcp.whitesquaresoft.com.
+    ## Grrr - make sure this is a string not an int - https://github.com/kubernetes/kubernetes/issues/59113
+    "external-dns.alpha.kubernetes.io/ttl": "10"
+  labels:
+    app: team
+spec:
+  type: LoadBalancer
+  selector:
+    app: team
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http

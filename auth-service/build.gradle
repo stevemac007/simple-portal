@@ -1,0 +1,42 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.4.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.whitesquare.portal'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	implementation "org.springframework.boot:spring-boot-starter-aop"
+	implementation "org.springframework.boot:spring-boot-starter-hateoas"
+	implementation "org.springframework.boot:spring-boot-starter-data-rest"
+	implementation "io.jsonwebtoken:jjwt:0.8.0"
+	implementation "org.postgresql:postgresql"
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "com.h2database:h2"
+	testImplementation "io.rest-assured:rest-assured:3.1.0"
+	testImplementation "io.rest-assured:json-path:3.1.0"
+	testImplementation "org.springframework.security:spring-security-test"
+}
