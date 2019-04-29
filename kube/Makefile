@@ -1,4 +1,5 @@
 PROJECT_ID=$(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
+ZONE=us-west1-b
 
 CLUSTER_NAME=my-istio-cluster
 CLUSTER_VERSION=1.12
