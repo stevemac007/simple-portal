@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open --host 0.0.0.0"
   },
   "dependencies": {
     "vue": "^2.5.16",

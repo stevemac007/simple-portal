@@ -13,7 +13,8 @@ import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/v1/vehicles")
+@RequestMapping("/vehicles")
+@CrossOrigin(origins = "*")
 public class VehicleController {
 
     private VehicleRepository vehicles;

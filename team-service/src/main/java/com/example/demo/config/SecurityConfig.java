@@ -14,7 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
@@ -30,9 +29,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .httpBasic().disable()
             .csrf().disable()
+            .cors().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS,"/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/vehicles/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN")

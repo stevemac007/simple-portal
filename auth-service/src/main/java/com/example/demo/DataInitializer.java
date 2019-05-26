@@ -24,19 +24,23 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        this.users.save(User.builder()
-            .username("user")
-            .password(this.passwordEncoder.encode("password"))
-            .roles(Arrays.asList( "ROLE_USER"))
-            .build()
-        );
+        if (!this.users.findByUsername("user").isPresent()) {
+            this.users.save(User.builder()
+                    .username("user")
+                    .password(this.passwordEncoder.encode("password"))
+                    .roles(Arrays.asList("ROLE_USER"))
+                    .build()
+            );
+        }
 
-        this.users.save(User.builder()
-            .username("admin")
-            .password(this.passwordEncoder.encode("password"))
-            .roles(Arrays.asList("ROLE_USER", "ROLE_ADMIN"))
-            .build()
-        );
+        if (!this.users.findByUsername("admin").isPresent()) {
+            this.users.save(User.builder()
+                    .username("admin")
+                    .password(this.passwordEncoder.encode("password"))
+                    .roles(Arrays.asList("ROLE_USER", "ROLE_ADMIN"))
+                    .build()
+            );
+        }
 
         log.debug("printing all users...");
         this.users.findAll().forEach(v -> log.debug(" User :" + v.toString()));

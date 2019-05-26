@@ -1,0 +1,40 @@
+version: '3.3' # specify docker-compose version
+
+services:
+
+  auth:
+    container_name: auth
+    build: auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+    - "8080:8080"
+
+  team:
+    container_name: team
+    build: team-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+    - "8081:8081"
+
+  database:
+    container_name:  database
+    image: postgres
+    ports:
+      - "5432:5432"
+#    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./data/postdb:/var/lib/postgresql
+  
+  web:
+    container_name: web
+    build: web-portal
+    ports:
+      - "8082:8080"
