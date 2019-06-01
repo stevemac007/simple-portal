@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -154,7 +156,7 @@ public class IntegrationTests {
         given()
             .header("Authorization", "Bearer "+admin_token)
             .contentType(ContentType.JSON)
-            .body(UserForm.builder().username("test").build())
+            .body(UserForm.builder().roles(Arrays.asList("ADMIN", "USER", "BLART")).username("test").build())
 
         .when()
             .post("/users")
@@ -162,6 +164,22 @@ public class IntegrationTests {
         .then()
             .statusCode(201);
 
+        // Load the users and make sure it has persisted
+
+        given()
+
+            .header("Authorization", "Bearer "+admin_token)
+            .accept(ContentType.JSON)
+
+        .when()
+
+            .get("/users")
+
+        .then()
+
+            .assertThat()
+            .content(containsString("BLART"))
+            .statusCode(HttpStatus.SC_OK);
         //@formatter:on
     }
 

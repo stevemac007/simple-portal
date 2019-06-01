@@ -15,7 +15,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -50,10 +53,16 @@ public class UserController {
             throw new UsernameDuplicateException(form.getUsername());
         }
 
+        // ENSURE THE DEFAULT USER ROLE IS PRESENT
+        if (form.getRoles() == null) {
+            form.setRoles(new ArrayList<>());
+            form.getRoles().add("USER");
+        }
+
         User saved = this.users.save(User.builder()
                 .username(form.getUsername())
                 .password(this.passwordEncoder.encode("password"))
-                .roles(Arrays.asList("ROLE_USER"))
+                .roles(form.getRoles())
                 .build());
 
         return created(
@@ -75,6 +84,7 @@ public class UserController {
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody UserForm form) {
         User existed = this.users.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         existed.setUsername(form.getUsername());
+        existed.setRoles(form.getRoles());
 
         this.users.save(existed);
         return noContent().build();
