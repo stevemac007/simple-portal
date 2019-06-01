@@ -1,5 +1,9 @@
 package com.example.demo;
 
+import com.example.demo.domain.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.web.UserController;
+import com.example.demo.web.UserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @MockBean
-    UserRepository Users;
+    UserRepository users;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -35,16 +39,16 @@ public class UserControllerTest {
 
     @Before
     public void setUp() {
-        given(this.Users.findById(1L))
-            .willReturn(Optional.of(User.builder().name("test").build()));
+        given(this.users.findById(1L))
+            .willReturn(Optional.of(User.builder().username("test").build()));
 
-        given(this.Users.findById(2L))
+        given(this.users.findById(2L))
             .willReturn(Optional.empty());
 
-        given(this.Users.save(any(User.class)))
-            .willReturn(User.builder().name("test").build());
+        given(this.users.save(any(User.class)))
+            .willReturn(User.builder().username("test").build());
 
-        doNothing().when(this.Users).delete(any(User.class));
+        doNothing().when(this.users).delete(any(User.class));
     }
 
     @Test
@@ -52,14 +56,14 @@ public class UserControllerTest {
 
         this.mockMvc
             .perform(
-                get("/v1/Users/{id}", 1L)
+                get("/users/{id}", 1L)
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("test"));
+            .andExpect(jsonPath("$.username").value("test"));
 
-        verify(this.Users, times(1)).findById(any(Long.class));
-        verifyNoMoreInteractions(this.Users);
+        verify(this.users, times(1)).findById(any(Long.class));
+        verifyNoMoreInteractions(this.users);
     }
 
     @Test
@@ -67,13 +71,13 @@ public class UserControllerTest {
 
         this.mockMvc
             .perform(
-                get("/v1/Users/{id}", 2L)
+                get("/users/{id}", 2L)
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNotFound());
 
-        verify(this.Users, times(1)).findById(any(Long.class));
-        verifyNoMoreInteractions(this.Users);
+        verify(this.users, times(1)).findById(any(Long.class));
+        verifyNoMoreInteractions(this.users);
     }
 
     @Test
@@ -81,14 +85,15 @@ public class UserControllerTest {
 
         this.mockMvc
             .perform(
-                post("/v1/Users")
-                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().name("test").build()))
+                post("/users")
+                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().username("test").build()))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isCreated());
 
-        verify(this.Users, times(1)).save(any(User.class));
-        verifyNoMoreInteractions(this.Users);
+        verify(this.users, times(1)).save(any(User.class));
+        verify(this.users, times(1)).findByUsername("test");
+        verifyNoMoreInteractions(this.users);
     }
 
     @Test
@@ -96,15 +101,15 @@ public class UserControllerTest {
 
         this.mockMvc
             .perform(
-                put("/v1/Users/1")
-                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().name("test").build()))
+                put("/users/1")
+                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().username("test").build()))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNoContent());
 
-        verify(this.Users, times(1)).findById(any(Long.class));
-        verify(this.Users, times(1)).save(any(User.class));
-        verifyNoMoreInteractions(this.Users);
+        verify(this.users, times(1)).findById(any(Long.class));
+        verify(this.users, times(1)).save(any(User.class));
+        verifyNoMoreInteractions(this.users);
     }
 
     @Test
@@ -112,13 +117,13 @@ public class UserControllerTest {
 
         this.mockMvc
             .perform(
-                delete("/v1/Users/1")
+                delete("/users/1")
             )
             .andExpect(status().isNoContent());
 
-        verify(this.Users, times(1)).findById(any(Long.class));
-        verify(this.Users, times(1)).delete(any(User.class));
-        verifyNoMoreInteractions(this.Users);
+        verify(this.users, times(1)).findById(any(Long.class));
+        verify(this.users, times(1)).delete(any(User.class));
+        verifyNoMoreInteractions(this.users);
     }
 
 }

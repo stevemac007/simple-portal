@@ -21,6 +21,10 @@ get-login:
 get-users:
 	http GET http://localhost:8080/users --auth-type=jwt
 
+
+post-demo1:
+	http POST http://localhost:8080/users --auth-type=jwt < demo/v1.json
+
 package:
 	gradle bootJar
 	docker build -t gcr.io/$(PROJECT_ID)/auth .

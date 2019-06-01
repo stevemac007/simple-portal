@@ -2,15 +2,22 @@ package com.example.demo.web;
 
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.ok;
+import java.util.Arrays;
+
+import static org.springframework.http.ResponseEntity.*;
 
 @RestController
 @RequestMapping("/users")
@@ -19,18 +26,36 @@ public class UserController {
 
     private UserRepository users;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public UserController(UserRepository users) {
         this.users = users;
     }
 
     @GetMapping("")
-    public ResponseEntity all() {
-        return ok(this.users.findAll());
+    public ResponseEntity all(HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        if (request.isUserInRole("ROLE_ADMIN")) {
+            return ok(this.users.findAll());
+        }
+        else {
+            return ok(this.users.findByUsername(userDetails.getUsername()));
+        }
     }
 
     @PostMapping("")
-    public ResponseEntity save(@RequestBody UserForm form, HttpServletRequest request) {
-        User saved = this.users.save(User.builder().username(form.getUsername()).build());
+    public ResponseEntity save(@Valid @RequestBody UserForm form, HttpServletRequest request) {
+
+        if (this.users.findByUsername(form.getUsername()).isPresent()) {
+            throw new UsernameDuplicateException(form.getUsername());
+        }
+
+        User saved = this.users.save(User.builder()
+                .username(form.getUsername())
+                .password(this.passwordEncoder.encode("password"))
+                .roles(Arrays.asList("ROLE_USER"))
+                .build());
+
         return created(
             ServletUriComponentsBuilder
                 .fromContextPath(request)

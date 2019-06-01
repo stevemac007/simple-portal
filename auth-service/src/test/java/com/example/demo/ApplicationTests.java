@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.web.UserForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,10 +39,10 @@ public class ApplicationTests {
     }
 
     @Test
-    public void getAllVehicles() throws Exception {
+    public void getAllUsers() throws Exception {
         this.mockMvc
             .perform(
-                get("/v1/vehicles")
+                get("/users")
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk());
@@ -52,8 +53,8 @@ public class ApplicationTests {
 
         this.mockMvc
             .perform(
-                post("/v1/vehicles")
-                    .content(this.objectMapper.writeValueAsBytes(VehicleForm.builder().name("test").build()))
+                post("/users")
+                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().username("test").build()))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().is4xxClientError());
@@ -66,8 +67,8 @@ public class ApplicationTests {
 
         this.mockMvc
             .perform(
-                post("/v1/vehicles")
-                    .content(this.objectMapper.writeValueAsBytes(VehicleForm.builder().name("test").build()))
+                post("/users")
+                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().username("test").build()))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isCreated());
