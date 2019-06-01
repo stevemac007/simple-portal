@@ -20,12 +20,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = VehicleController.class, secure = false)
+@WebMvcTest(controllers = UserController.class, secure = false)
 @RunWith(SpringRunner.class)
-public class VehicleControllerTest {
+public class UserControllerTest {
 
     @MockBean
-    VehicleRepository vehicles;
+    UserRepository Users;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -35,16 +35,16 @@ public class VehicleControllerTest {
 
     @Before
     public void setUp() {
-        given(this.vehicles.findById(1L))
-            .willReturn(Optional.of(Vehicle.builder().name("test").build()));
+        given(this.Users.findById(1L))
+            .willReturn(Optional.of(User.builder().name("test").build()));
 
-        given(this.vehicles.findById(2L))
+        given(this.Users.findById(2L))
             .willReturn(Optional.empty());
 
-        given(this.vehicles.save(any(Vehicle.class)))
-            .willReturn(Vehicle.builder().name("test").build());
+        given(this.Users.save(any(User.class)))
+            .willReturn(User.builder().name("test").build());
 
-        doNothing().when(this.vehicles).delete(any(Vehicle.class));
+        doNothing().when(this.Users).delete(any(User.class));
     }
 
     @Test
@@ -52,14 +52,14 @@ public class VehicleControllerTest {
 
         this.mockMvc
             .perform(
-                get("/v1/vehicles/{id}", 1L)
+                get("/v1/Users/{id}", 1L)
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("test"));
 
-        verify(this.vehicles, times(1)).findById(any(Long.class));
-        verifyNoMoreInteractions(this.vehicles);
+        verify(this.Users, times(1)).findById(any(Long.class));
+        verifyNoMoreInteractions(this.Users);
     }
 
     @Test
@@ -67,13 +67,13 @@ public class VehicleControllerTest {
 
         this.mockMvc
             .perform(
-                get("/v1/vehicles/{id}", 2L)
+                get("/v1/Users/{id}", 2L)
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNotFound());
 
-        verify(this.vehicles, times(1)).findById(any(Long.class));
-        verifyNoMoreInteractions(this.vehicles);
+        verify(this.Users, times(1)).findById(any(Long.class));
+        verifyNoMoreInteractions(this.Users);
     }
 
     @Test
@@ -81,14 +81,14 @@ public class VehicleControllerTest {
 
         this.mockMvc
             .perform(
-                post("/v1/vehicles")
-                    .content(this.objectMapper.writeValueAsBytes(VehicleForm.builder().name("test").build()))
+                post("/v1/Users")
+                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().name("test").build()))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isCreated());
 
-        verify(this.vehicles, times(1)).save(any(Vehicle.class));
-        verifyNoMoreInteractions(this.vehicles);
+        verify(this.Users, times(1)).save(any(User.class));
+        verifyNoMoreInteractions(this.Users);
     }
 
     @Test
@@ -96,15 +96,15 @@ public class VehicleControllerTest {
 
         this.mockMvc
             .perform(
-                put("/v1/vehicles/1")
-                    .content(this.objectMapper.writeValueAsBytes(VehicleForm.builder().name("test").build()))
+                put("/v1/Users/1")
+                    .content(this.objectMapper.writeValueAsBytes(UserForm.builder().name("test").build()))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNoContent());
 
-        verify(this.vehicles, times(1)).findById(any(Long.class));
-        verify(this.vehicles, times(1)).save(any(Vehicle.class));
-        verifyNoMoreInteractions(this.vehicles);
+        verify(this.Users, times(1)).findById(any(Long.class));
+        verify(this.Users, times(1)).save(any(User.class));
+        verifyNoMoreInteractions(this.Users);
     }
 
     @Test
@@ -112,13 +112,13 @@ public class VehicleControllerTest {
 
         this.mockMvc
             .perform(
-                delete("/v1/vehicles/1")
+                delete("/v1/Users/1")
             )
             .andExpect(status().isNoContent());
 
-        verify(this.vehicles, times(1)).findById(any(Long.class));
-        verify(this.vehicles, times(1)).delete(any(Vehicle.class));
-        verifyNoMoreInteractions(this.vehicles);
+        verify(this.Users, times(1)).findById(any(Long.class));
+        verify(this.Users, times(1)).delete(any(User.class));
+        verifyNoMoreInteractions(this.Users);
     }
 
 }

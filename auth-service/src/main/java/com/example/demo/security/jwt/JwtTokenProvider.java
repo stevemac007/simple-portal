@@ -53,9 +53,9 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-//        Jwt parsed = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-//        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(getUsername(token), "", getRoles(token));
+        Jwt parsed = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", getRoles(token));
     }
 
     public String getUsername(String token) {
