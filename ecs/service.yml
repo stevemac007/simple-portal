@@ -3,20 +3,18 @@ Description: Deploy a service on AWS Fargate, hosted in a public subnet, and acc
 Parameters:
   StackName:
     Type: String
-    Default: production
     Description: The name of the parent Fargate networking stack that you created. Necessary
-      to locate and reference resources created by that stack.
+                 to locate and reference resources created by that stack.
   ServiceName:
     Type: String
-    Default: nginx
     Description: A name for the service
   DNSSuffix:
     Type: String
+    Description: A valid Route53 public domain to alias each service's entry point to.
   ImageUrl:
     Type: String
-    Default: nginx
     Description: The url of a docker image that contains the application process that
-      will handle the traffic for this service
+                 will handle the traffic for this service
   ContainerPort:
     Type: Number
     Default: 80
@@ -29,12 +27,6 @@ Parameters:
     Type: Number
     Default: 512
     Description: How much memory in megabytes to give the container
-  Path:
-    Type: String
-    Default: "*"
-    Description: A path on the public load balancer that this service
-      should be connected to. Use * to send all load balancer
-      traffic to this service.
   HealthcheckPath:
     Type: String
     Default: "/"

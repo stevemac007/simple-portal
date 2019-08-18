@@ -1,13 +1,9 @@
 {
-  "StackName": "",
   "ServiceName": "team",
-  "DNSSuffix": "thanatopho.be",
-  "ImageUrl": "",
   "ContainerPort": "8081",
   "ContainerCpu": "512",
   "ContainerMemory": "1024",
   "HealthcheckPath": "/actuator/health",
-  "Path": "*",
   "Priority": "2",
   "DesiredCount": "2",
   "Role": ""
