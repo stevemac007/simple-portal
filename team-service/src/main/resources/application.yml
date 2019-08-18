@@ -1,6 +1,21 @@
 server:
   port: 8081
 
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+#        exclude: loggers
+
+info:
+  app:
+    name: Example JWT Team API
+    description: An example JWT consuming Team API
+    version: 1.0.0
+
 spring:
   jackson:
     mapper:
@@ -29,7 +44,7 @@ spring:
     show_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       # fixes Caused by: java.sql.SQLFeatureNotSupportedException: Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
       hibernate.jdbc.lob.non_contextual_creation: true
@@ -41,7 +56,7 @@ spring:
 logging:
   level:
     org.springframework.web: INFO
-    org.springframework.security: DEBUG
+    org.springframework.security: INFO
     com.example: DEBUG
   file: app.log
   

@@ -30,7 +30,11 @@ public class User implements UserDetails {
     private String username;
 
     @NotEmpty
+    @JsonIgnore
     private String password;
+
+    @JsonIgnore
+    private String temporaryPassword;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -42,7 +46,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public String getPassword() {
         return this.password;
     }

@@ -1,0 +1,12 @@
+{
+  "StackName": "",
+  "ServiceName": "postgres",
+  "ImageUrl": "postgres:10.4",
+  "ContainerPort": "5432",
+  "ContainerCpu": "256",
+  "ContainerMemory": "512",
+  "Path": "*",
+  "Priority": "99",
+  "DesiredCount": "1",
+  "Role": ""
+}

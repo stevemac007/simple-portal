@@ -2,9 +2,12 @@ package com.example.demo.web;
 
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,10 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -44,6 +44,71 @@ public class UserController {
         else {
             return ok(this.users.findByUsername(userDetails.getUsername()));
         }
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/resetpassword/{id}")
+    public ResponseEntity resetPassword(@PathVariable("id") Long id) {
+        User existed = this.users.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        String temporaryPassword = RandomString.make(8);
+        existed.setTemporaryPassword(passwordEncoder.encode(temporaryPassword));
+
+        this.users.save(existed);
+
+        Map<Object, Object> map = new HashMap<>();
+        map.put("temporary_password", temporaryPassword);
+
+        return ok(map);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/changepassword/{id}")
+    public ResponseEntity changePassword(@PathVariable("id") Long id, @Valid @RequestBody UserPasswordResetForm form) {
+        User existed = this.users.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        if (existed.getTemporaryPassword() != null && passwordEncoder.matches(form.getCurrentPassword(), existed.getTemporaryPassword())) {
+            existed.setPassword(passwordEncoder.encode(form.getNewPassword()));
+            existed.setTemporaryPassword(null);
+            this.users.save(existed);
+        }
+        else if (passwordEncoder.matches(form.getCurrentPassword(), existed.getPassword())) {
+            existed.setPassword(passwordEncoder.encode(form.getNewPassword()));
+            existed.setTemporaryPassword(null);
+            this.users.save(existed);
+        }
+        else {
+            throw new BadCredentialsException("Invalid username/password supplied");
+        }
+
+        Map<Object, Object> map = new HashMap<>();
+        map.put("result", "Password changed successfully");
+
+        return ok(map);
+    }
+
+    @PostMapping("/changepassword")
+    public ResponseEntity changeSelfPassword(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody UserPasswordResetForm form) {
+        User existed = this.users.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UserNotFoundException());
+
+        if (existed.getTemporaryPassword() != null && passwordEncoder.matches(form.getCurrentPassword(), existed.getTemporaryPassword())) {
+            existed.setPassword(passwordEncoder.encode(form.getNewPassword()));
+            existed.setTemporaryPassword(null);
+            this.users.save(existed);
+        }
+        else if (passwordEncoder.matches(form.getCurrentPassword(), existed.getPassword())) {
+            existed.setPassword(passwordEncoder.encode(form.getNewPassword()));
+            existed.setTemporaryPassword(null);
+            this.users.save(existed);
+        }
+        else {
+            throw new BadCredentialsException("Invalid password supplied");
+        }
+
+        Map<Object, Object> map = new HashMap<>();
+        map.put("result", "Password changed successfully");
+
+        return ok(map);
     }
 
     @PostMapping("")
@@ -73,13 +138,13 @@ public class UserController {
                 .toUri())
             .build();
     }
-
     @GetMapping("/{id}")
     public ResponseEntity get(@PathVariable("id") Long id) {
         return ok(this.users.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
 
+    @Secured("ROLE_ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody UserForm form) {
         User existed = this.users.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -90,6 +155,7 @@ public class UserController {
         return noContent().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         User existed = this.users.findById(id).orElseThrow(() -> new UserNotFoundException(id));

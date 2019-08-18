@@ -26,15 +26,24 @@ public class JwtTokenFilter extends GenericFilterBean {
         throws IOException, ServletException {
 
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
-        log.info("Token resolved " + token);
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            log.info("Valid token found");
-            Authentication auth = jwtTokenProvider.getAuthentication(token);
+        try {
+            if (token != null) {
+                log.info("Token received " + token);
 
-            if (auth != null) {
-                log.info("Authentication for " + auth.getPrincipal());
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                if (jwtTokenProvider.validateToken(token)) {
+                    log.info("Valid token found");
+
+                    Authentication auth = jwtTokenProvider.getAuthentication(token);
+
+                    if (auth != null) {
+                        log.info("Authentication for " + auth.getPrincipal());
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
+                }
             }
+        }
+        catch (InvalidJwtAuthenticationException ex) {
+            log.info("Token invalid ("+ ex.getMessage()+")");
         }
         filterChain.doFilter(req, res);
     }

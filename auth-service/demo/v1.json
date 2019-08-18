@@ -1,4 +1,4 @@
 {
-  "usersname": "user2",
-  "username": "user2"
+  "username": "user3",
+  "roles": ["BING", "BANG"]
 }
