@@ -30,6 +30,7 @@ phases:
     commands:
       - echo [PHASE] Entered the post_build phase...
       - make cipublish
+
 artifacts:
   files:
     - 'ecs/*'
