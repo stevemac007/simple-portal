@@ -4,9 +4,8 @@ BUILD_VERSION   := $(if $(BUILD_VERSION),$(BUILD_VERSION),$(NOW))
 
 cibuild:
 	@echo "Building version '$(BUILD_VERSION)'"
-	(cd auth-service && gradle bootJar)
-	(cd team-service && gradle bootJar)
-	docker-compose build
+	(cd auth-service && make package)
+	(cd team-service && make package)
 
 cipublish:
 	@echo "Building version '$(BUILD_VERSION)'"
