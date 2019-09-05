@@ -17,14 +17,13 @@ env:
 phases:
   install:
     runtime-versions:
-      java: openjdk11
       docker: 18
+      java: openjdk11
     commands:
       - echo [PHASE] Entered the install phase...
-#      - # 1. We install aws-cli (Alpine Linux)
-#      - apk --no-cache update
-#      - apk --no-cache add python py-pip py-setuptools ca-certificates curl groff less
-#      - pip --no-cache-dir install awscli
+      - docker ps
+      - pip --no-cache-dir install awscli
+      - aws accountid
   pre_build:
     commands:
       - echo [PHASE] Entered the pre_build phase...
