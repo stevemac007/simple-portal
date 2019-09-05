@@ -6,6 +6,8 @@ This is a sample project containing 3 containers working together to deliver a b
  * Team
  * Web-portal
 
+![](https://codebuild.ap-southeast-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiajIrWThWQ0hUc01HZjlLdTBqdlJma3VlYm1VZVJhREp2ZmxYdkpKYmdCc3BNY0pXRkpXRFI1ZGkwR3I5UERaRm9ydWZoY1B3YVkrelM3UkdSS25JS3dRPSIsIml2UGFyYW1ldGVyU3BlYyI6ImcvaVpZQkx2RnppcktKeWMiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 ## Containers
 
 ### Auth
