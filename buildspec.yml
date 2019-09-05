@@ -25,6 +25,9 @@ phases:
       - pip --no-cache-dir install awscli
       - aws --version
       - aws sts get-caller-identity --query Account --output text
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+
   pre_build:
     commands:
       - echo [PHASE] Entered the pre_build phase...
@@ -44,6 +47,7 @@ phases:
     commands:
       - echo [PHASE] Entered the build phase...
       - make cibuild
+
   post_build:
     commands:
       - echo [PHASE] Entered the post_build phase...
