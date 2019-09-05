@@ -3,16 +3,6 @@ version: 0.2
 env:
   variables:
     GRADLE_OPTS: -Xmx1024m
-#    SEMVERRVICE_NAME: "tourist"
-#    AWS_S3_BUCKET_UPLOAD_URL: "s3://repo/"
-#    AWS_S3_BUCKET_UPLOAD_FOLDER: "tourist"
-#    SAM_TEMPLATE: "sam.yaml"
-#    SAM_TEMPLATE_WITH_VERSION: "sam-with-version.yaml"
-#    CLOUDFORMATION_TEMPLATE_OUTPUT: "cf-codepipeline.yaml"
-#    CLOUDFORMATION_STACK_NAME: "tfs-dev-lambda-tourist"
-#  parameter-store:
-#    AWS_S3_BUCKET_ACCESS_KEY: "/CodeBuild/TFS/S3_ACCESS_KEY"
-#    AWS_S3_BUCKET_SECRET_KEY: "/CodeBuild/TFS/S3_SECRET_KEY"
 
 phases:
   install:
@@ -30,21 +20,6 @@ phases:
       - set
       - set | grep CODEBUILD
 
-  pre_build:
-    commands:
-      - echo [PHASE] Entered the pre_build phase...
-#      - chmod +x ./gradlew
-#      - currentVersion=$(cat version | sed 's/-SNAPSHOT//' | tr -d ' ')
-#      # 1. Preparing Gradle for the build
-#      - touch gradle.properties
-#      - echo "org.gradle.daemon=false" > gradle.properties
-#      - echo "org.gradle.parallel=false" >> gradle.properties
-#      - echo "org.gradle.incremental=false" >> gradle.properties
-#      - echo "kotlin.incremental=false" >> gradle.properties
-#      # 2. Running tests
-#      - ./gradlew $SERVICE_NAME-domain:test --no-daemon -Dorg.gradle.parallel=false
-#      - ./gradlew $SERVICE_NAME-data:test --no-daemon -Dorg.gradle.parallel=false
-#      - ./gradlew $SERVICE_NAME-common:test --no-daemon -Dorg.gradle.parallel=false
   build:
     commands:
       - echo [PHASE] Entered the build phase...
@@ -55,10 +30,7 @@ phases:
     commands:
       - echo [PHASE] Entered the post_build phase...
       - make cipublish
-      -
-#      # 1. Uploading to S3
-#      - aws s3 cp ./build/libs/$SERVICE_NAME.jar $AWS_S3_BUCKET_UPLOAD_URL$AWS_S3_BUCKET_UPLOAD_FOLDER/$SERVICE_NAME-$currentVersion.jar
-#      # 2. We package and deploy with SAM
-#      - cat $SAM_TEMPLATE | sed "s/SEMVER/$currentVersion/" > $SAM_TEMPLATE_WITH_VERSION
-#      - aws cloudformation package --template-file=$SAM_TEMPLATE_WITH_VERSION --s3-bucket=$AWS_S3_BUCKET_UPLOAD_URL --output-template-file=$CLOUDFORMATION_TEMPLATE_OUTPUT
-#      - aws cloudformation deploy --template-file=$CLOUDFORMATION_TEMPLATE_OUTPUT --stack-name=$CLOUDFORMATION_STACK_NAME --capabilities=CAPABILITY_IAM
+artifacts:
+  files:
+    - 'ecs/*'
+  name: simpleportal-$(BUILD_VERSION)
