@@ -27,6 +27,8 @@ phases:
       - aws sts get-caller-identity --query Account --output text
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - set
+      - set | grep CODEBUILD
 
   pre_build:
     commands:

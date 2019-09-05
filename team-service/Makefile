@@ -13,7 +13,7 @@ package:
 
 push: package
 	-gcloud auth configure-docker
-	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
+	docker tag $(PROJECT_NAME):latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
 	docker push gcr.io/$(PROJECT_ID)/$(PROJECT_NAME)
 
 deploy: push
@@ -26,6 +26,9 @@ all: base build package
 create-ecr:
 	aws ecr create-repository --repository-name $(PROJECT_NAME)
 
-push-ecr: package
-	docker tag $(PROJECT_NAME):latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
+push-ecr: package push-ci-ecr
+    echo "done"
+
+push-ci-ecr:
+	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest

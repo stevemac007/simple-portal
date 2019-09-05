@@ -3,6 +3,7 @@
 
 # AWS Account ID
 ACCOUNT_ID=$(shell aws sts get-caller-identity --query Account --output text)
+BUILD_VERSION := $(shell date +%Y-%m-%d-%H%M%S)
 
 WHOAMI=`whoami`
 PROJECT_NAME=auth
@@ -65,9 +66,17 @@ push: package
 create-ecr:
 	aws ecr create-repository --repository-name $(PROJECT_NAME)
 
-push-ecr: package
+push-ecr: package push-ci-ecr
+	echo "done"
+
+push-ci-ecr:
+	@echo "Building version '$(BUILD_VERSION)'"
+
 	docker tag auth:latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
+	docker tag auth:latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)
+
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
+	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)
 
 deploy:
 	kubectl set image deployment/auth auth=gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest

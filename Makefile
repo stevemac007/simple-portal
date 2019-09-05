@@ -1,13 +1,16 @@
 export JWT_AUTH_TOKEN=$(shell cat jwt.tmp)
+BUILD_VERSION := $(shell date +%Y-%m-%d-%H%M%S)
 
 cibuild:
+	@echo "Building version '$(BUILD_VERSION)'"
 	(cd auth-service && gradle bootJar)
 	(cd team-service && gradle bootJar)
 	docker-compose build
 
 cipublish:
-	(cd auth-service && make push-ecr)
-	(cd team-service && make push-ecr)
+	@echo "Building version '$(BUILD_VERSION)'"
+	(cd auth-service && make push-ci-ecr)
+	(cd team-service && make push-ci-ecr)
 
 deps:
 	pip install -U httpie-jwt-auth
