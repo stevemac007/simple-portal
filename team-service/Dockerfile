@@ -1,4 +1,4 @@
-FROM alpine-java:base
+FROM openjdk:8-jdk-alpine
 MAINTAINER steve@whitesquaresoft.com
 COPY build/libs/team-0.0.1-SNAPSHOT.jar /opt/spring-cloud/lib/
 ENTRYPOINT ["/usr/bin/java"]
