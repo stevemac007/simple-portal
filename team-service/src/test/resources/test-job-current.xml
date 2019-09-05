@@ -1,0 +1,56 @@
+<Response>
+    <Status>OK</Status>
+    <Jobs>
+        <Job>
+            <ID>J000159</ID>
+            <Name>Brochure Design</Name>
+            <Description />
+            <State>Planned</State>
+            <ClientOrderNumber />
+            <StartDate>2007-09-15T00:00:00</StartDate>
+            <DueDate>2007-09-22T00:00:00</DueDate>
+            <CompletedDate>2007-09-22T00:00:00</CompletedDate>
+            <Client>
+                <ID>5</ID>
+                <Name>A C Smith Limited</Name>
+            </Client>
+            <Manager>
+                <ID>6</ID>
+                <Name>John Smith</Name>
+            </Manager>
+            <Partner>
+                <ID>12</ID>
+                <Name>Jack Brown</Name>
+            </Partner>
+            <Assigned>
+                <Staff>
+                    <ID>5</ID>
+                    <Name>Jo Bloggs</Name>
+                </Staff>
+            </Assigned>
+        </Job>
+        <Job>
+            <ID>J000232</ID>
+            <Name>Custom Development</Name>
+            <Description />
+            <State>Planned</State>
+            <ClientOrderNumber />
+            <StartDate>2008-08-06T00:00:00</StartDate>
+            <DueDate>2008-08-29T00:00:00</DueDate>
+            <Client>
+                <ID>6</ID>
+                <Name>Robert Holdings</Name>
+            </Client>
+            <Contact>
+                <ID>584</ID>
+                <Name>John Roberts</Name>
+            </Contact>
+            <Assigned>
+                <Staff>
+                    <ID>5</ID>
+                    <Name>Jo Bloggs</Name>
+                </Staff>
+            </Assigned>
+        </Job>
+    </Jobs>
+</Response>
