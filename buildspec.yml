@@ -9,6 +9,7 @@ phases:
     runtime-versions:
       docker: 18
       java: openjdk11
+
     commands:
       - echo [PHASE] Entered the install phase...
       - docker ps
