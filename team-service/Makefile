@@ -1,8 +1,11 @@
-PROJECT_ID=$(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
-ACCOUNT_ID=$(shell aws sts get-caller-identity --query Account --output text)
+PROJECT_ID      := $(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
+ACCOUNT_ID      := $(shell aws sts get-caller-identity --query Account --output text)
 
-WHOAMI=$(shell whoami)
-PROJECT_NAME=team
+NOW             := $(shell date +%Y-%m-%d-%H%M%S)
+BUILD_VERSION   := $(if $(BUILD_VERSION),$(BUILD_VERSION),$(NOW))
+
+WHOAMI          := $(shell whoami)
+PROJECT_NAME    := team
 
 run: package
 	gradle bootRun
@@ -27,8 +30,13 @@ create-ecr:
 	aws ecr create-repository --repository-name $(PROJECT_NAME)
 
 push-ecr: package push-ci-ecr
-    echo "done"
+	echo "done"
 
 push-ci-ecr:
+	@echo "Building version '$(BUILD_VERSION)'"
+
 	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
+	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)
+
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
+	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)

@@ -2,13 +2,15 @@
 # PROJECT_ID=$(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
 
 # AWS Account ID
-ACCOUNT_ID=$(shell aws sts get-caller-identity --query Account --output text)
-BUILD_VERSION := $(shell date +%Y-%m-%d-%H%M%S)
+ACCOUNT_ID      := $(shell aws sts get-caller-identity --query Account --output text)
 
-WHOAMI=`whoami`
-PROJECT_NAME=auth
+NOW             := $(shell date +%Y-%m-%d-%H%M%S)
+BUILD_VERSION   := $(if $(BUILD_VERSION),$(BUILD_VERSION),$(NOW))
 
-HOST=$(PROJECT_NAME).thanatopho.be
+WHOAMI          := `whoami`
+PROJECT_NAME    := auth
+
+HOST            := $(PROJECT_NAME).thanatopho.be
 #HOST=localhost:8080
 
 export JWT_AUTH_TOKEN=$(shell cat jwt.tmp)
@@ -60,7 +62,7 @@ package:
 
 push: package
 	-gcloud auth configure-docker
-	docker tag auth:latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
+	docker tag $(PROJECT_NAME):latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
 	docker push gcr.io/$(PROJECT_ID)/$(PROJECT_NAME)
 
 create-ecr:
@@ -72,8 +74,8 @@ push-ecr: package push-ci-ecr
 push-ci-ecr:
 	@echo "Building version '$(BUILD_VERSION)'"
 
-	docker tag auth:latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
-	docker tag auth:latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)
+	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
+	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)
 
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):$(BUILD_VERSION)

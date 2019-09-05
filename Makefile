@@ -1,5 +1,6 @@
 export JWT_AUTH_TOKEN=$(shell cat jwt.tmp)
-BUILD_VERSION := $(shell date +%Y-%m-%d-%H%M%S)
+NOW             := $(shell date +%Y-%m-%d-%H%M%S)
+BUILD_VERSION   := $(if $(BUILD_VERSION),$(BUILD_VERSION),$(NOW))
 
 cibuild:
 	@echo "Building version '$(BUILD_VERSION)'"
