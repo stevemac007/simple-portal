@@ -2,7 +2,7 @@
 PROJECT_ID=$(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
 
 # AWS Account ID
-ACCOUNT_ID=$(shell aws accountid)
+ACCOUNT_ID=$(shell aws sts get-caller-identity --query Account --output text)
 
 WHOAMI=`whoami`
 PROJECT_NAME=auth
