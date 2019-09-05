@@ -20,13 +20,13 @@ phases:
       java: openjdk11
     commands:
       - echo [PHASE] Entered the install phase...
-      - # 1. We install aws-cli (Alpine Linux)
-      - apk --no-cache update
-      - apk --no-cache add python py-pip py-setuptools ca-certificates curl groff less
-      - pip --no-cache-dir install awscli
-#  pre_build:
-#    commands:
-#      - echo [PHASE] Entered the pre_build phase...
+#      - # 1. We install aws-cli (Alpine Linux)
+#      - apk --no-cache update
+#      - apk --no-cache add python py-pip py-setuptools ca-certificates curl groff less
+#      - pip --no-cache-dir install awscli
+  pre_build:
+    commands:
+      - echo [PHASE] Entered the pre_build phase...
 #      - chmod +x ./gradlew
 #      - currentVersion=$(cat version | sed 's/-SNAPSHOT//' | tr -d ' ')
 #      # 1. Preparing Gradle for the build
@@ -43,9 +43,10 @@ phases:
     commands:
       - echo [PHASE] Entered the build phase...
       - make cibuild
-#  post_build:
-#    commands:
-#      - echo [PHASE] Entered the post_build phase...
+  post_build:
+    commands:
+      - echo [PHASE] Entered the post_build phase...
+      - make cipublish
 #      # 1. Uploading to S3
 #      - aws s3 cp ./build/libs/$SERVICE_NAME.jar $AWS_S3_BUCKET_UPLOAD_URL$AWS_S3_BUCKET_UPLOAD_FOLDER/$SERVICE_NAME-$currentVersion.jar
 #      # 2. We package and deploy with SAM
