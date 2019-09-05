@@ -48,12 +48,14 @@ phases:
   build:
     commands:
       - echo [PHASE] Entered the build phase...
+      - export BUILD_VERSION=${CODEBUILD_START_TIME}
       - make cibuild
 
   post_build:
     commands:
       - echo [PHASE] Entered the post_build phase...
       - make cipublish
+      -
 #      # 1. Uploading to S3
 #      - aws s3 cp ./build/libs/$SERVICE_NAME.jar $AWS_S3_BUCKET_UPLOAD_URL$AWS_S3_BUCKET_UPLOAD_FOLDER/$SERVICE_NAME-$currentVersion.jar
 #      # 2. We package and deploy with SAM
