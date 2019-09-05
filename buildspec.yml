@@ -16,6 +16,8 @@ env:
 
 phases:
   install:
+    runtime-versions:
+      java: openjdk11
     commands:
       - echo [PHASE] Entered the install phase...
       - # 1. We install aws-cli (Alpine Linux)
