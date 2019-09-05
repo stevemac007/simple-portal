@@ -1,5 +1,5 @@
 # GCP Project ID
-PROJECT_ID=$(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
+# PROJECT_ID=$(shell gcloud config list project --format=flattened | awk 'FNR == 1 {print $$2}')
 
 # AWS Account ID
 ACCOUNT_ID=$(shell aws sts get-caller-identity --query Account --output text)
@@ -56,17 +56,17 @@ post-change-password:
 package:
 	gradle bootJar
 	docker build -t $(PROJECT_NAME) .
-	docker tag auth:latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
-	docker tag auth:latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
 
 push: package
 	-gcloud auth configure-docker
+	docker tag auth:latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
 	docker push gcr.io/$(PROJECT_ID)/$(PROJECT_NAME)
 
 create-ecr:
 	aws ecr create-repository --repository-name $(PROJECT_NAME)
 
 push-ecr: package
+	docker tag auth:latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
 
 deploy:

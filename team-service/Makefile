@@ -10,11 +10,10 @@ run: package
 package:
 	gradle bootJar
 	docker build -t $(PROJECT_NAME) .
-	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
-	docker tag $(PROJECT_NAME):latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
 
 push: package
 	-gcloud auth configure-docker
+	docker tag $(PROJECT_NAME):latest $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
 	docker push gcr.io/$(PROJECT_ID)/$(PROJECT_NAME)
 
 deploy: push
@@ -28,4 +27,5 @@ create-ecr:
 	aws ecr create-repository --repository-name $(PROJECT_NAME)
 
 push-ecr: package
+	docker tag $(PROJECT_NAME):latest gcr.io/$(PROJECT_ID)/$(PROJECT_NAME):latest
 	docker push $(ACCOUNT_ID).dkr.ecr.ap-southeast-2.amazonaws.com/$(PROJECT_NAME):latest
